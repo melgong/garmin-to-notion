@@ -189,7 +189,7 @@ def create_activity(client, database_id, activity):
         "Distance (mi)": {"number": round(activity.get("distance", 0), 2)},
         "Duration (min)": {"number": round(activity.get('duration', 0) / 60, 2)},
         "Calories": {"number": round(activity.get('calories', 0))},
-        "Avg Pace": {"rich_text": [{"text": {"content": (activity.get('averageSpeed', 0)}}]},
+        "Avg Pace": {"rich_text": [{"text": {"content": (activity.get('averageSpeed', 0))}}]},
         "Avg Power": {"number": round(activity.get('avgPower', 0), 1)},
         "Max Power": {"number": round(activity.get('maxPower', 0), 1)},
         "Training Effect": {"select": {"name": format_training_effect(activity.get('trainingEffectLabel', 'Unknown'))}},
