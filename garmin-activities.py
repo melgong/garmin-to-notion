@@ -107,31 +107,20 @@ def format_pace(average_speed):
     else:
         return ""
     
-def activity_exists(client, database_id, activity_date, activity_type, activity_name):
+def activity_exists(client, database_id, activity):
+    activity_id = activity.get("activityId")
+    if activity_id:
+        query = client.databases.query(
+            database_id=database_id,
+            filter={
+                "property": "Garmin Activity ID",
+                "number": {"equals": int(activity_id)}
+            }
+        )
+        results = query["results"]
+        return results[0] if results else None
 
-    # Check if an activity already exists in the Notion database and return it if found.
-
-    # Handle the activity_type which is now a tuple
-    if isinstance(activity_type, tuple):
-        main_type, _ = activity_type
-    else:
-        main_type = activity_type[0] if isinstance(activity_type, (list, tuple)) else activity_type
-    
-    # Determine the correct activity type for the lookup
-    lookup_type = "Stretching" if "stretch" in activity_name.lower() else main_type
-    
-    query = client.databases.query(
-        database_id=database_id,
-        filter={
-            "and": [
-                {"property": "Date", "date": {"equals": activity_date.split('T')[0]}},
-                {"property": "Activity Type", "select": {"equals": lookup_type}},
-                {"property": "Activity Name", "title": {"equals": activity_name}}
-            ]
-        }
-    )
-    results = query['results']
-    return results[0] if results else None
+    return None
 
 
 def activity_needs_update(existing_activity, new_activity):
@@ -172,6 +161,7 @@ def activity_needs_update(existing_activity, new_activity):
 def create_activity(client, database_id, activity):
 
     # Create a new activity in the Notion database
+    
     activity_date = activity.get('startTimeGMT')
     activity_name = format_entertainment(activity.get('activityName', 'Unnamed Activity'))
     activity_type, activity_subtype = format_activity_type(
@@ -183,6 +173,7 @@ def create_activity(client, database_id, activity):
     icon_url = ACTIVITY_ICONS.get(activity_subtype if activity_subtype != activity_type else activity_type)
     
     properties = {
+        "Garmin Activity ID": {"number": int(activity.get("activityId"))},
         "Date": {"date": {"start": activity_date}},
         "Activity Type": {"select": {"name": activity_type}},
         "Subactivity Type": {"select": {"name": activity_subtype}},
@@ -279,7 +270,7 @@ def main():
         )
         
         # Check if activity already exists in Notion
-        existing_activity = activity_exists(client, database_id, activity_date, activity_type, activity_name)
+        existing_activity = activity_exists(client, database_id, activity)
         
         if existing_activity:
             if activity_needs_update(existing_activity, activity):
