@@ -107,7 +107,7 @@ def format_pace(average_speed):
     else:
         return ""
     
-def activity_exists(client, database_id, activity_date, activity_type, activity_name):
+def activity_exists(client, database_id, activity_date, activity_type, activity_name=None):
 
     # Check if an activity already exists in the Notion database and return it if found.
 
