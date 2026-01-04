@@ -126,7 +126,6 @@ def activity_exists(client, database_id, activity_date, activity_type, activity_
             "and": [
                 {"property": "Date", "date": {"equals": activity_date.split('T')[0]}},
                 {"property": "Activity Type", "select": {"equals": lookup_type}},
-                {"property": "Activity Name", "title": {"equals": activity_name}}
             ]
         }
     )
