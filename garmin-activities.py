@@ -150,10 +150,10 @@ def activity_needs_update(existing_activity, new_activity):
     )
     
     return (
-        existing_props['Distance (km)']['number'] != round(new_activity.get('distance', 0) / 1000, 2) or
+        existing_props['Distance (mi)']['number'] != round(new_activity.get('distance', 0), 2) or
         existing_props['Duration (min)']['number'] != round(new_activity.get('duration', 0) / 60, 2) or
         existing_props['Calories']['number'] != round(new_activity.get('calories', 0)) or
-        existing_props['Avg Pace']['rich_text'][0]['text']['content'] != format_pace(new_activity.get('averageSpeed', 0)) or
+        existing_props['Avg Pace']['rich_text'][0]['text']['content'] != new_activity.get('averageSpeed', 0) or
         existing_props['Avg Power']['number'] != round(new_activity.get('avgPower', 0), 1) or
         existing_props['Max Power']['number'] != round(new_activity.get('maxPower', 0), 1) or
         existing_props['Training Effect']['select']['name'] != format_training_effect(new_activity.get('trainingEffectLabel', 'Unknown')) or
